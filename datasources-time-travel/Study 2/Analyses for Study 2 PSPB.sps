@@ -1,0 +1,128 @@
+﻿* Encoding: UTF-8.
+* Encoding: .
+**Analyses reported in Study 2 of "Everyday Thoughts in Time: An Experience Sampling Study of Mental Time Travel".
+
+**Thought level analyses: Using "Study 2 ESM all trials" file.
+
+**DISTRIBUTION OF THOUGHTS IN TIME***
+
+*FREQUENCY of time zones across all thoughts.
+FREQUENCIES VARIABLES=time
+  /ORDER=ANALYSIS.
+
+
+
+
+**PRESENCE OF OTHERS*****
+* Alone vs. with others.
+GENLINMIXED
+/DATA_STRUCTURE
+subjects = ID
+/FIELDS
+target = time
+/TARGET_OPTIONS
+DISTRIBUTION = MULTINOMIAL
+link=LOGIT
+REFERENCE =2
+/fixed
+effects= Alone.
+
+*Number of people with (0, 1, 2, 3, 4, 5+).
+GENLINMIXED
+/DATA_STRUCTURE
+subjects = ID
+/FIELDS
+target = time
+/TARGET_OPTIONS
+DISTRIBUTION = MULTINOMIAL
+link=LOGIT
+REFERENCE =2
+/fixed
+effects= N_with.
+
+
+
+** PRAGMATIC PROSPECTION***
+
+
+*Approach.
+MIXED APPROACH with PAST FUTURE
+/FIXED PAST FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Avoidance.
+MIXED AVOID with PAST FUTURE
+/FIXED PAST FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Goals and ideals.
+MIXED IDEAL with PAST FUTURE
+/FIXED PAST FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Duties and obligations.
+MIXED OUGHT with PAST FUTURE
+/FIXED PAST FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+
+
+
+*Filter to compare PAST and FUTURE only.
+USE ALL.
+COMPUTE filter_$=(time~=2).
+VARIABLE LABELS filter_$ 'PRESENT=0 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+*Approach.
+MIXED APPROACH with PAST
+/FIXED PAST
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Avoidance.
+MIXED AVOID with PAST
+/FIXED PAST
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Goals and ideals.
+MIXED IDEAL with PAST
+/FIXED  PAST
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+*Duties and obligations.
+MIXED OUGHT with PAST
+/FIXED  PAST
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+
+
+**Arousal.
+FILTER OFF.
+USE ALL.
+EXECUTE.
+
+
+MIXED ACTIVE with PAST FUTURE
+/FIXED PAST FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+
+*Filter to compare PAST and FUTURE only.
+USE ALL.
+COMPUTE filter_$=(time~=2).
+VARIABLE LABELS filter_$ 'PRESENT=0 (FILTER)'.
+VALUE LABELS filter_$ 0 'Not Selected' 1 'Selected'.
+FORMATS filter_$ (f1.0).
+FILTER BY filter_$.
+EXECUTE.
+
+
+MIXED ACTIVE with FUTURE
+/FIXED FUTURE
+/RANDOM INTERCEPT | SUBJECT(ID)
+/PRINT SOLUTION.
+
+
+
