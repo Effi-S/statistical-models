@@ -1,2 +1,9 @@
 wood.pdf
 .vscode
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+renv/library/
+*.Rproj
+renv/
