@@ -122,9 +122,10 @@ fit_b <- glm(
 
 lucia_pvalue <- summary(fit_b)$coefficients["Lucia", "Pr(>|z|)"]
 morning_pvalue <- summary(fit_b)$coefficients["morning", "Pr(>|z|)"]
-print("P values:")
-print("======")
-print(sprintf("Morning: %s Lucia: %s", morning_pvalue, lucia_pvalue))
+cat(
+    "P values:\n======\n",
+    sprintf("Morning: %s Lucia: %s", morning_pvalue, lucia_pvalue)
+)
 
 
 # (c) **Less careful analysis.** Aggregate the data over
@@ -238,6 +239,10 @@ p_value <- phyper(x - 1, m, n, k, lower.tail = FALSE)
 
 p_value
 
+# ========================
+# == Simulation section ==
+# ========================
+
 NUM_SIMULATIONS <- 200
 P_THRESH <- 0.05
 
@@ -328,6 +333,7 @@ sim_d <- function(data) {
 counter_b <- 0
 counter_c <- 0
 counter_d <- 0
+# We the number of simlutations that cross our P value Threshhold.
 for (i in 1:NUM_SIMULATIONS) {
     d <- gen_data()
     counter_b <- counter_b + as.integer(sim_b(data = d) < P_THRESH)
@@ -335,17 +341,19 @@ for (i in 1:NUM_SIMULATIONS) {
     counter_d <- counter_d + as.integer(sim_d(data = d) < P_THRESH)
 }
 
-print(sprintf("Number of pvalues below threshhold (%s)", P_THRESH))
-print("=====")
-sprintf(
-    "Simulation b: %s = (%s percent)",
-    counter_b, (counter_b / NUM_SIMULATIONS) * 100
-)
-sprintf(
-    "Simulation c: %s = (%s percent)",
-    counter_c, (counter_c / NUM_SIMULATIONS) * 100
-)
-sprintf(
-    "Simulation d: %s = (%s percent)",
-    counter_d, (counter_d / NUM_SIMULATIONS) * 100
+cat(
+    sprintf("Number of pvalues below threshhold (%s)\n", P_THRESH),
+    "=====\n",
+    sprintf(
+        "Simulation b: %s/%s (%s percent)\n",
+        counter_b, NUM_SIMULATIONS, (counter_b / NUM_SIMULATIONS) * 100
+    ),
+    sprintf(
+        "Simulation c: %s/%s (%s percent)\n",
+        counter_c, NUM_SIMULATIONS, (counter_c / NUM_SIMULATIONS) * 100
+    ),
+    sprintf(
+        "Simulation d: %s/%s (%s percent)\n",
+        counter_d, NUM_SIMULATIONS, (counter_d / NUM_SIMULATIONS) * 100
+    )
 )

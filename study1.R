@@ -7,7 +7,7 @@ library(haven)
 path <- "datasources-time-travel/Study\ 1/ETT_ESM_Study1.sav"
 print(sprintf("Reading %s", path))
 tib <- haven::read_sav(path)
-colnames(df)
+colnames(tib)
 
 # -2- Initial cleaning
 tib_clean <- tib |>
@@ -31,9 +31,6 @@ length(tib_clean)
 # number of future thoughts (i.e., number of observations
 # for which future=1). (Hint: The
 # aggregate() function or dplyr::group by() may be useful.)
-#  Use descriptFive statistics
-# and graphs to inspect these variables,
-# and describe any missing data.
 subj_level <- tib_clean |>
   group_by(Subject) |>
   summarise(
@@ -49,6 +46,29 @@ subj_level <- tib_clean |>
   ) |>
   drop_na(age, sex, O, C, E, A, N)
 
+#  Use descriptFive statistics
+# and graphs to inspect these variables,
+# and describe any missing data.
+table(subj_level$age, useNA = "ifany")
+table(subj_level$sex, useNA = "ifany")
+sapply(
+  subj_level[, c("age", "O", "C", "E", "A", "N", "n_obs", "n_futures")],
+  function(x) {
+    c(
+      Mean = mean(x, na.rm = TRUE),
+      SD = sd(x, na.rm = TRUE),
+      Min = min(x, na.rm = TRUE),
+      Max = max(x, na.rm = TRUE)
+    )
+  }
+)
+par(mfrow = c(3, 3))
+hist(subj_level$age, main = "Age", xlab = "Age", col = "darkblue")
+hist(subj_level$O, main = "O", xlab = "O", col = "purple")
+hist(subj_level$C, main = "C", xlab = "C", col = "brown")
+hist(subj_level$E, main = "E", xlab = "E", col = "green")
+hist(subj_level$A, main = "A", xlab = "A", col = "yellow")
+hist(subj_level$N, main = "N", xlab = "N", col = "pink")
 
 # (b) Using your favorite model selection method,
 #  find an appropriate Poisson regression
@@ -57,7 +77,7 @@ subj_level <- tib_clean |>
 # Include an offset term to account for the different
 #  numbers of observations per person.
 
-model <- glm(n_futures ~ sex + O + C + E + A + N,
+model <- glm(n_futures ~ age + sex + O + C + E + A + N,
   data = subj_level,
   family = poisson(link = "log"),
   offset = log(n_obs)
@@ -76,7 +96,7 @@ if (disp > 1.5) {
   print(sprintf("No Overdispersion detected: (%s)", disp))
 }
 
-quasi_model <- glm(n_futures ~ sex + O + C + E + A + N,
+quasi_model <- glm(n_futures ~ age + sex + O + C + E + A + N,
   data = subj_level,
   family = quasipoisson(link = "log"),
   offset = log(n_obs),
